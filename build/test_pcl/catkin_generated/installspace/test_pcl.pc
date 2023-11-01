@@ -1,0 +1,8 @@
+prefix=/home/bjersgen2004/pc_new/install
+
+Name: test_pcl
+Description: Description of test_pcl
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib /usr/local/lib/libCSF.a
+Requires: pcl_conversions pcl_ros roscpp rospy sensor_msgs

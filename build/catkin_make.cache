@@ -1,0 +1,2 @@
+test_pcl
+-DCATKIN_DEVEL_PREFIX=/home/bjersgen2004/pc_new/devel -DCMAKE_INSTALL_PREFIX=/home/bjersgen2004/pc_new/install -G Unix Makefiles
