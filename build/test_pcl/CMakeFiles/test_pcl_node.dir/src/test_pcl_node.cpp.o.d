@@ -1958,4 +1958,5 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: \
  /usr/local/include/Cloth.h /usr/local/include/Vec3.h \
  /usr/local/include/Particle.h \
  /usr/include/pcl-1.10/pcl/segmentation/region_growing_rgb.h \
- /usr/include/pcl-1.10/pcl/segmentation/region_growing.h
+ /usr/include/pcl-1.10/pcl/segmentation/region_growing.h \
+ /home/bjersgen2004/pc_new/src/test_pcl/include/test_pcl/test_pcl_node.h

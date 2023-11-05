@@ -12,9 +12,10 @@
 #include <time.h>
 #include <pcl/filters/filter_indices.h> // for pcl::removeNaNFromPointCloud
 #include <pcl/segmentation/region_growing_rgb.h>
-
+#include "test_pcl_node.h"
 
 using namespace std;
+const char* config_file_path = "/home/bjersgen2004/pc_new/src/test_pcl/src/params.cfg";
 // ros::Publisher pub_ply_map;
 
 void CSF_addPointCloud(const vector<int>& index_vec, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered)
@@ -40,6 +41,39 @@ void CSF_addPointCloud(const vector<int>& index_vec, const pcl::PointCloud<pcl::
 void clothSimulationFilter(const vector< csf::Point >& pc,vector<int> &groundIndexes,vector<int> & offGroundIndexes)
 {
     //step 1 read point cloud
+    Cfg cfg;
+    std::string slop_smooth;
+	cfg.readConfigFile(config_file_path, "slop_smooth", slop_smooth);
+	bool ss = false;
+	if (slop_smooth == "true" || slop_smooth == "True")
+	{
+		ss = true;
+	}
+	else if (slop_smooth == "false" || slop_smooth == "False")
+	{
+		ss = false;
+	}
+	else{
+		if (atoi(slop_smooth.c_str()) == 0){
+			ss = false;
+		}
+		else
+		{
+			ss = true;
+		}
+	}
+    std::string class_threshold;
+	cfg.readConfigFile(config_file_path, "class_threshold", class_threshold);
+	std::string cloth_resolution;
+	cfg.readConfigFile(config_file_path, "cloth_resolution", cloth_resolution);
+	std::string interations;
+	cfg.readConfigFile(config_file_path, "interations", interations);
+	std::string rigidness;
+	cfg.readConfigFile(config_file_path, "rigidness", rigidness);
+	std::string time_step;
+	cfg.readConfigFile(config_file_path, "time_step", time_step);
+
+
     CSF csf;
     csf.setPointCloud(pc);// or csf.readPointsFromFile(pointClouds_filepath); 
     //pc can be vector< csf::Point > or PointCloud defined in point_cloud.h
@@ -47,13 +81,13 @@ void clothSimulationFilter(const vector< csf::Point >& pc,vector<int> &groundInd
     //step 2 parameter settings
     //Among these paramters:  
     //time_step  interations class_threshold can remain as defualt in most cases.
-    csf.params.bSloopSmooth = false;
-    csf.params.cloth_resolution = 0.5;
-    csf.params.rigidness = 3;
+    csf.params.bSloopSmooth = ss;
+    csf.params.cloth_resolution = atof(cloth_resolution.c_str());
+    csf.params.rigidness = atoi(rigidness.c_str());
 
-    csf.params.time_step = 0.65;
-    csf.params.class_threshold = 0.5;
-    csf.params.interations = 500;
+    csf.params.time_step = atof(time_step.c_str());
+    csf.params.class_threshold = atof(class_threshold.c_str());
+    csf.params.interations = atoi(interations.c_str());
 
     //step 3 do filtering
     //result stores the index of ground points or non-ground points in the original point cloud
@@ -110,7 +144,6 @@ int main (int argc, char **argv)
     pcl::PCDWriter writer;
     writer.write<pcl::PointXYZRGB>("groundPointCloud.pcd", *cloud_filtered_ground, false);
 
-    // cloud_filtered->points.clear();
     CSF_addPointCloud(offGroundIndexes, cloud,cloud_filtered_nonground);
     writer.write<pcl::PointXYZRGB>("nonGroundPointCloud.pcd", *cloud_filtered_nonground, false);
 
