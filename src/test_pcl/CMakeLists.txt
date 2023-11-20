@@ -17,7 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
 )
-
+find_package(PCL  COMPONENTS common visualization io REQUIRED)
 FIND_PACKAGE(OpenMP REQUIRED)
 if(OPENMP_FOUND)
 message("OPENMP FOUND")
@@ -162,6 +162,7 @@ include_directories(
 target_link_libraries(${PROJECT_NAME}_node
   CSF
   ${catkin_LIBRARIES}
+  pcl_visualization
 )
 
 #############

@@ -13,11 +13,84 @@
 #include <pcl/filters/filter_indices.h> // for pcl::removeNaNFromPointCloud
 #include <pcl/segmentation/region_growing_rgb.h>
 #include "test_pcl_node.h"
+#include <pcl/console/parse.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <boost/thread/thread.hpp>
+#include <pcl/features/boundary.h>
+#include <math.h>
+#include <boost/make_shared.hpp>
+#include <pcl/visualization/cloud_viewer.h>
+#include <pcl/visualization/range_image_visualizer.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/filters/covariance_sampling.h>
+#include <pcl/filters/normal_space.h>
+#include <pcl/kdtree/kdtree_flann.h>
+
+
 
 using namespace std;
 const char* config_file_path = "/home/bjersgen2004/pc_new/src/test_pcl/src/params.cfg";
 // ros::Publisher pub_ply_map;
 
+
+int estimateBorders(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,float re,float reforn) 
+{ 
+
+	pcl::PointCloud<pcl::Boundary> boundaries; 
+	pcl::BoundaryEstimation<pcl::PointXYZRGB, pcl::Normal, pcl::Boundary> boundEst; 
+	pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> normEst; 
+	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>); 
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_boundary (new pcl::PointCloud<pcl::PointXYZRGB>); 
+	normEst.setInputCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr(cloud)); 
+	normEst.setRadiusSearch(reforn); 
+	normEst.compute(*normals); 
+
+	boundEst.setInputCloud(cloud); 
+	boundEst.setInputNormals(normals); 
+	boundEst.setRadiusSearch(re); 
+	boundEst.setAngleThreshold(M_PI/4); 
+	boundEst.setSearchMethod(pcl::search::KdTree<pcl::PointXYZRGB>::Ptr (new pcl::search::KdTree<pcl::PointXYZRGB>)); 
+	boundEst.compute(boundaries); 
+
+	for(int i = 0; i < cloud->points.size(); i++) 
+	{ 
+		
+		if(boundaries[i].boundary_point > 0) 
+		{ 
+			cloud_boundary->push_back(cloud->points[i]); 
+		} 
+	} 
+
+    pcl::PCDWriter writer;
+    cloud_boundary->height=1;
+    cloud_boundary->width=cloud_boundary->points.size();
+    writer.write<pcl::PointXYZRGB>("CLoud_boundary.pcd", *cloud_boundary, false);
+
+
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> MView (new pcl::visualization::PCLVisualizer ("BoundaryEstimation"));
+	
+	int v1(0); 
+	MView->createViewPort (0.0, 0.0, 0.5, 1.0, v1); 
+	MView->setBackgroundColor (0.3, 0.3, 0.3, v1); 
+	MView->addText ("Raw point clouds", 10, 10, "v1_text", v1); 
+	int v2(0); 
+	MView->createViewPort (0.5, 0.0, 1, 1.0, v2); 
+	MView->setBackgroundColor (0.5, 0.5, 0.5, v2); 
+	MView->addText ("Boudary point clouds", 10, 10, "v2_text", v2); 
+
+	MView->addPointCloud<pcl::PointXYZRGB> (cloud, "sample cloud",v1);
+	MView->addPointCloud<pcl::PointXYZRGB> (cloud_boundary, "cloud_boundary",v2);
+	MView->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_COLOR, 1,0,0, "sample cloud",v1);
+	MView->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_COLOR, 0,1,0, "cloud_boundary",v2);
+	MView->addCoordinateSystem (1.0);
+	MView->initCameraParameters ();
+
+	MView->spin();
+
+	return 0; 
+} 
 void CSF_addPointCloud(const vector<int>& index_vec, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered)
 {
     auto& points = cloud_filtered->points;
@@ -37,8 +110,6 @@ void CSF_addPointCloud(const vector<int>& index_vec, const pcl::PointCloud<pcl::
     cloud_filtered->height = 1;
     cloud_filtered->width = cloud_filtered->points.size();
 }
-
-
 void clothSimulationFilter(const vector< csf::Point >& pc,vector<int> &groundIndexes,vector<int> & offGroundIndexes)
 {
     //step 1 read point cloud
@@ -127,7 +198,7 @@ int main (int argc, char **argv)
     //using csf
     vector<csf::Point> pc;
     const auto& pointclouds = cloud->points;
-    pc.resresizeize(cloud->size());
+    pc.resize(cloud->size());
     transform(pointclouds.begin(), pointclouds.end(), pc.begin(), [&](const auto& p)->csf::Point {
         csf::Point pp;
         pp.x = p.x;
@@ -196,9 +267,10 @@ int main (int argc, char **argv)
 		PCL_ERROR("Couldn't read file1 \n");
 		return (-1);
 	}
-    auto& ground_nearby_points = ground_nearby->points;
-    auto& after_sege_points = after_sege->points;
+    
     //EuclideanClusterExtraction
+    auto& after_sege_points = after_sege->points;
+    
     std::vector<pcl::PointIndices> cluster_indices;
     pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>);
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
@@ -239,6 +311,23 @@ int main (int argc, char **argv)
     after_sege->height=1;
     after_sege->width=after_sege->points.size();
     writer.write<pcl::PointXYZRGB>("AfterSege.pcd", *after_sege, false);
+
+    //EstimateBorders
+	srand(time(NULL));
+    Cfg cfg;
+    std::string re_read;
+	cfg.readConfigFile(config_file_path, "re", re_read);
+    std::string reforn_read;
+	cfg.readConfigFile(config_file_path, "reforn", reforn_read);
+
+    float re, reforn;
+
+	re=atof(re_read.c_str());
+	reforn=atof(reforn_read.c_str());
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_src (new pcl::PointCloud<pcl::PointXYZRGB>); 
+    pcl::io::loadPCDFile ("/home/bjersgen2004/pc_new/AfterSege.pcd", *cloud_src);	
+	estimateBorders(cloud_src,re,reforn);
+
 
 
     end = clock();

@@ -209,6 +209,11 @@ test_pcl_node_EXTERNAL_OBJECTS =
 /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libboost_system.so.1.71.0
 /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
 /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libconsole_bridge.so.0.4
+/home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libpcl_visualization.so
+/home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libpcl_search.so
+/home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libpcl_kdtree.so
+/home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libpcl_octree.so
+/home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libpcl_common.so
 /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: test_pcl/CMakeFiles/test_pcl_node.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/bjersgen2004/pc_new/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node"
 	cd /home/bjersgen2004/pc_new/build/test_pcl && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_pcl_node.dir/link.txt --verbose=$(VERBOSE)
