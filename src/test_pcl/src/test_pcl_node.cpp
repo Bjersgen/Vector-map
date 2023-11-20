@@ -38,58 +38,58 @@ const char* config_file_path = "/home/bjersgen2004/pc_new/src/test_pcl/src/param
 int estimateBorders(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,float re,float reforn) 
 { 
 
-	pcl::PointCloud<pcl::Boundary> boundaries; 
-	pcl::BoundaryEstimation<pcl::PointXYZRGB, pcl::Normal, pcl::Boundary> boundEst; 
-	pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> normEst; 
-	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>); 
-	pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_boundary (new pcl::PointCloud<pcl::PointXYZRGB>); 
-	normEst.setInputCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr(cloud)); 
-	normEst.setRadiusSearch(reforn); 
-	normEst.compute(*normals); 
+    pcl::PointCloud<pcl::Boundary> boundaries; 
+    pcl::BoundaryEstimation<pcl::PointXYZRGB, pcl::Normal, pcl::Boundary> boundEst; 
+    pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> normEst; 
+    pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>); 
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_boundary (new pcl::PointCloud<pcl::PointXYZRGB>); 
+    normEst.setInputCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr(cloud)); 
+    normEst.setRadiusSearch(reforn); 
+    normEst.compute(*normals); 
 
-	boundEst.setInputCloud(cloud); 
-	boundEst.setInputNormals(normals); 
-	boundEst.setRadiusSearch(re); 
-	boundEst.setAngleThreshold(M_PI/4); 
-	boundEst.setSearchMethod(pcl::search::KdTree<pcl::PointXYZRGB>::Ptr (new pcl::search::KdTree<pcl::PointXYZRGB>)); 
-	boundEst.compute(boundaries); 
+    boundEst.setInputCloud(cloud); 
+    boundEst.setInputNormals(normals); 
+    boundEst.setRadiusSearch(re); 
+    boundEst.setAngleThreshold(M_PI/4); 
+    boundEst.setSearchMethod(pcl::search::KdTree<pcl::PointXYZRGB>::Ptr (new pcl::search::KdTree<pcl::PointXYZRGB>)); 
+    boundEst.compute(boundaries); 
 
-	for(int i = 0; i < cloud->points.size(); i++) 
-	{ 
-		
-		if(boundaries[i].boundary_point > 0) 
-		{ 
-			cloud_boundary->push_back(cloud->points[i]); 
-		} 
-	}
-    
+    for(int i = 0; i < cloud->points.size(); i++) 
+    { 
+        
+        if(boundaries[i].boundary_point > 0) 
+        { 
+            cloud_boundary->push_back(cloud->points[i]); 
+        } 
+    }
+
     pcl::PCDWriter writer;
     cloud_boundary->height=1;
     cloud_boundary->width=cloud_boundary->points.size();
     writer.write<pcl::PointXYZRGB>("CLoud_boundary.pcd", *cloud_boundary, false);
 
 
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> MView (new pcl::visualization::PCLVisualizer ("BoundaryEstimation"));
-	
-	int v1(0); 
-	MView->createViewPort (0.0, 0.0, 0.5, 1.0, v1); 
-	MView->setBackgroundColor (0.3, 0.3, 0.3, v1); 
-	MView->addText ("Raw point clouds", 10, 10, "v1_text", v1); 
-	int v2(0); 
-	MView->createViewPort (0.5, 0.0, 1, 1.0, v2); 
-	MView->setBackgroundColor (0.5, 0.5, 0.5, v2); 
-	MView->addText ("Boudary point clouds", 10, 10, "v2_text", v2); 
+    boost::shared_ptr<pcl::visualization::PCLVisualizer> MView (new pcl::visualization::PCLVisualizer ("BoundaryEstimation"));
 
-	MView->addPointCloud<pcl::PointXYZRGB> (cloud, "sample cloud",v1);
-	MView->addPointCloud<pcl::PointXYZRGB> (cloud_boundary, "cloud_boundary",v2);
-	MView->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_COLOR, 1,0,0, "sample cloud",v1);
-	MView->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_COLOR, 0,1,0, "cloud_boundary",v2);
-	MView->addCoordinateSystem (1.0);
-	MView->initCameraParameters ();
+    int v1(0); 
+    MView->createViewPort (0.0, 0.0, 0.5, 1.0, v1); 
+    MView->setBackgroundColor (0.3, 0.3, 0.3, v1); 
+    MView->addText ("Raw point clouds", 10, 10, "v1_text", v1); 
+    int v2(0); 
+    MView->createViewPort (0.5, 0.0, 1, 1.0, v2); 
+    MView->setBackgroundColor (0.5, 0.5, 0.5, v2); 
+    MView->addText ("Boudary point clouds", 10, 10, "v2_text", v2); 
 
-	MView->spin();
+    MView->addPointCloud<pcl::PointXYZRGB> (cloud, "sample cloud",v1);
+    MView->addPointCloud<pcl::PointXYZRGB> (cloud_boundary, "cloud_boundary",v2);
+    MView->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_COLOR, 1,0,0, "sample cloud",v1);
+    MView->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_COLOR, 0,1,0, "cloud_boundary",v2);
+    MView->addCoordinateSystem (1.0);
+    MView->initCameraParameters ();
 
-	return 0; 
+    MView->spin();
+
+    return 0; 
 } 
 void CSF_addPointCloud(const vector<int>& index_vec, const pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered)
 {
@@ -115,25 +115,25 @@ void clothSimulationFilter(const vector< csf::Point >& pc,vector<int> &groundInd
     //step 1 read point cloud
     Cfg cfg;
     std::string slop_smooth;
-	cfg.readConfigFile(config_file_path, "slop_smooth", slop_smooth);
-	bool ss = false;
-	if (slop_smooth == "true" || slop_smooth == "True")
-	{
-		ss = true;
-	}
-	else if (slop_smooth == "false" || slop_smooth == "False")
-	{
-		ss = false;
-	}
-	else{
-		if (atoi(slop_smooth.c_str()) == 0){
-			ss = false;
-		}
-		else
-		{
-			ss = true;
-		}
-	}
+    cfg.readConfigFile(config_file_path, "slop_smooth", slop_smooth);
+    bool ss = false;
+    if (slop_smooth == "true" || slop_smooth == "True")
+    {
+        	ss = true;
+    }
+    else if (slop_smooth == "false" || slop_smooth == "False")
+    {
+        	ss = false;
+    }
+    else{
+        if (atoi(slop_smooth.c_str()) == 0){	
+            ss = false;
+        }
+        else
+        {
+            ss = true;
+        }
+    }
     std::string class_threshold;
     cfg.readConfigFile(config_file_path, "class_threshold", class_threshold);
     std::string cloth_resolution;
