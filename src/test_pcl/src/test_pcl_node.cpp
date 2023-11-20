@@ -61,8 +61,8 @@ int estimateBorders(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,float re,float
 		{ 
 			cloud_boundary->push_back(cloud->points[i]); 
 		} 
-	} 
-
+	}
+    
     pcl::PCDWriter writer;
     cloud_boundary->height=1;
     cloud_boundary->width=cloud_boundary->points.size();
@@ -135,15 +135,15 @@ void clothSimulationFilter(const vector< csf::Point >& pc,vector<int> &groundInd
 		}
 	}
     std::string class_threshold;
-	cfg.readConfigFile(config_file_path, "class_threshold", class_threshold);
-	std::string cloth_resolution;
-	cfg.readConfigFile(config_file_path, "cloth_resolution", cloth_resolution);
-	std::string interations;
-	cfg.readConfigFile(config_file_path, "interations", interations);
-	std::string rigidness;
-	cfg.readConfigFile(config_file_path, "rigidness", rigidness);
-	std::string time_step;
-	cfg.readConfigFile(config_file_path, "time_step", time_step);
+    cfg.readConfigFile(config_file_path, "class_threshold", class_threshold);
+    std::string cloth_resolution;
+    cfg.readConfigFile(config_file_path, "cloth_resolution", cloth_resolution);
+    std::string interations;
+    cfg.readConfigFile(config_file_path, "interations", interations);
+    std::string rigidness;
+    cfg.readConfigFile(config_file_path, "rigidness", rigidness);
+    std::string time_step;
+    cfg.readConfigFile(config_file_path, "time_step", time_step);
 
 
     CSF csf;
@@ -270,7 +270,7 @@ int main (int argc, char **argv)
     
     //EuclideanClusterExtraction
     auto& after_sege_points = after_sege->points;
-    
+
     std::vector<pcl::PointIndices> cluster_indices;
     pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>);
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
@@ -316,23 +316,22 @@ int main (int argc, char **argv)
 	srand(time(NULL));
     Cfg cfg;
     std::string re_read;
-	cfg.readConfigFile(config_file_path, "re", re_read);
+    cfg.readConfigFile(config_file_path, "re", re_read);
     std::string reforn_read;
-	cfg.readConfigFile(config_file_path, "reforn", reforn_read);
+    cfg.readConfigFile(config_file_path, "reforn", reforn_read);
 
     float re, reforn;
-
-	re=atof(re_read.c_str());
-	reforn=atof(reforn_read.c_str());
-	pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_src (new pcl::PointCloud<pcl::PointXYZRGB>); 
+    re=atof(re_read.c_str());
+    reforn=atof(reforn_read.c_str());
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_src (new pcl::PointCloud<pcl::PointXYZRGB>); 
     pcl::io::loadPCDFile ("/home/bjersgen2004/pc_new/AfterSege.pcd", *cloud_src);	
-	estimateBorders(cloud_src,re,reforn);
+    estimateBorders(cloud_src,re,reforn);
 
 
 
     end = clock();
-	double dur = (double)(end - start);
-	printf("Use Time:%f\n", (dur / CLOCKS_PER_SEC));
+    double dur = (double)(end - start);
+    printf("Use Time:%f\n", (dur / CLOCKS_PER_SEC));
 
 
     //convert to ros and pub to rviz
