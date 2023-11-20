@@ -29,6 +29,7 @@ void CSF_addPointCloud(const vector<int>& index_vec, const pcl::PointCloud<pcl::
         pc.y = pointclouds[index].y;
         pc.z = pointclouds[index].z;
         // pc.intensity = pointclouds[index].intensity;
+        pc.b = 127;
 
         points.push_back(pc);
     });
@@ -111,116 +112,98 @@ int main (int argc, char **argv)
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered_nonground (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered_ground (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr ground_nearby (new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr after_sege (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointIndicesPtr ground (new pcl::PointIndices);
 
-    //pcl::PointCloud<pcl::PointXYZRGBRGBA> cloud;
-    // pcl::PointCloud<pcl::PointXYZRGB> cloud;
-    //if (pcl::io::loadPLYFile<pcl::PointXYZRGBRGBA>("/home/bjersgen2004/Documents/test.ply", cloud) == -1)
-    if (pcl::io::loadPCDFile<pcl::PointXYZRGB>("/home/bjersgen2004/Documents/map.pcd", *cloud) == -1)
+    // if (pcl::io::loadPCDFile<pcl::PointXYZRGB>("/home/bjersgen2004/Documents/map.pcd", *cloud) == -1)
+	// {
+	// 	PCL_ERROR("Couldn't read file1 \n");
+	// 	return (-1);
+	// }
+
+    // std::cerr << "Cloud before filtering: " << std::endl;
+    // std::cerr << *cloud << std::endl;
+
+    // //using csf
+    // vector<csf::Point> pc;
+    // const auto& pointclouds = cloud->points;
+    // pc.resresizeize(cloud->size());
+    // transform(pointclouds.begin(), pointclouds.end(), pc.begin(), [&](const auto& p)->csf::Point {
+    //     csf::Point pp;
+    //     pp.x = p.x;
+    //     pp.y = p.y;
+    //     pp.z = p.z;
+    //     return pp;
+    //     });
+
+    // std::vector<int> groundIndexes, offGroundIndexes;
+    // clothSimulationFilter(pc, groundIndexes, offGroundIndexes);
+    
+    // CSF_addPointCloud(groundIndexes, cloud,cloud_filtered_ground);
+    pcl::PCDWriter writer;
+    // writer.write<pcl::PointXYZRGB>("groundPointCloud.pcd", *cloud_filtered_ground, false);
+
+    // CSF_addPointCloud(offGroundIndexes, cloud,cloud_filtered_nonground);
+    // writer.write<pcl::PointXYZRGB>("nonGroundPointCloud.pcd", *cloud_filtered_nonground, false);
+
+    // cout<<"cloud_filtered_ground points:"<<cloud_filtered_ground->points.size() 
+    // << "cloud_filtered_nonground points:"<<cloud_filtered_nonground->points.size()<<endl;
+
+    // //bian li 
+    // auto& points = cloud_filtered_ground->points;
+    // float max_x = 0 , min_x = 0, max_y = 0, min_y=0, max_z=0, min_z=0;
+    // for(int i=0 ; i<cloud_filtered_ground->points.size();i++){
+    //     if(points[i].x<min_x)min_x = points[i].x;
+    //     if(points[i].x>max_x)max_x = points[i].x;
+    //     if(points[i].y<min_y)min_y = points[i].y;
+    //     if(points[i].y>max_y)max_y = points[i].y;
+    //     if(points[i].z<min_z)min_z = points[i].z;
+    //     if(points[i].z>max_z)max_z = points[i].z;
+
+    // }
+
+    // cout<<"max_x:"<<max_x<<endl;
+    // cout<<"min_x:"<<min_x<<endl;
+    // cout<<"max_y:"<<max_y<<endl;
+    // cout<<"min_y:"<<min_y<<endl;
+    // cout<<"max_z:"<<max_z<<endl;
+    // cout<<"min_z:"<<min_z<<endl;
+
+    // auto& nonground_points = cloud_filtered_nonground->points;
+    // auto& ground_nearby_points = ground_nearby->points;
+
+    // for(int i=0; i<cloud_filtered_nonground->points.size();i++){
+
+    //     if(nonground_points[i].x>=min_x && nonground_points[i].x<=max_x &&
+    //     nonground_points[i].y>=min_y && nonground_points[i].y<=max_y &&
+    //     nonground_points[i].z>=-5 && nonground_points[i].z<=5){
+    //         pcl::PointXYZRGB pc;
+    //         pc.x = nonground_points[i].x;
+    //         pc.y = nonground_points[i].y;
+    //         pc.z = nonground_points[i].z;
+    //         ground_nearby_points.push_back(pc);
+    //     }
+
+    // }
+    // ground_nearby->height = 1;
+    // ground_nearby->width = ground_nearby->points.size();
+    // cout<<"groundnearby points:" <<ground_nearby->points.size()<<endl;
+    // writer.write<pcl::PointXYZRGB>("GroundNearbyPointCloud.pcd", *ground_nearby, false);
+
+
+    if (pcl::io::loadPCDFile<pcl::PointXYZRGB>("/home/bjersgen2004/pc_new/GroundNearbyPointCloud.pcd", *ground_nearby) == -1)
 	{
 		PCL_ERROR("Couldn't read file1 \n");
 		return (-1);
 	}
-
-    std::cerr << "Cloud before filtering: " << std::endl;
-    std::cerr << *cloud << std::endl;
-
-    //using csf
-    vector<csf::Point> pc;
-    const auto& pointclouds = cloud->points;
-    pc.resize(cloud->size());
-    transform(pointclouds.begin(), pointclouds.end(), pc.begin(), [&](const auto& p)->csf::Point {
-        csf::Point pp;
-        pp.x = p.x;
-        pp.y = p.y;
-        pp.z = p.z;
-        return pp;
-        });
-
-    std::vector<int> groundIndexes, offGroundIndexes;
-    clothSimulationFilter(pc, groundIndexes, offGroundIndexes);
-    
-    CSF_addPointCloud(groundIndexes, cloud,cloud_filtered_ground);
-    pcl::PCDWriter writer;
-    writer.write<pcl::PointXYZRGB>("groundPointCloud.pcd", *cloud_filtered_ground, false);
-
-    CSF_addPointCloud(offGroundIndexes, cloud,cloud_filtered_nonground);
-    writer.write<pcl::PointXYZRGB>("nonGroundPointCloud.pcd", *cloud_filtered_nonground, false);
-
-    cout<<"cloud_filtered_ground points:"<<cloud_filtered_ground->points.size() 
-    << "cloud_filtered_nonground points:"<<cloud_filtered_nonground->points.size()<<endl;
-
-    //bian li 
-    auto& points = cloud_filtered_ground->points;
-    float max_x = 0 , min_x = 0, max_y = 0, min_y=0, max_z=0, min_z=0;
-    for(int i=0 ; i<cloud_filtered_ground->points.size();i++){
-        if(points[i].x<min_x)min_x = points[i].x;
-        if(points[i].x>max_x)max_x = points[i].x;
-        if(points[i].y<min_y)min_y = points[i].y;
-        if(points[i].y>max_y)max_y = points[i].y;
-        if(points[i].z<min_z)min_z = points[i].z;
-        if(points[i].z>max_z)max_z = points[i].z;
-
-    }
-
-    cout<<"max_x:"<<max_x<<endl;
-    cout<<"min_x:"<<min_x<<endl;
-    cout<<"max_y:"<<max_y<<endl;
-    cout<<"min_y:"<<min_y<<endl;
-    cout<<"max_z:"<<max_z<<endl;
-    cout<<"min_z:"<<min_z<<endl;
-
-    auto& nonground_points = cloud_filtered_nonground->points;
     auto& ground_nearby_points = ground_nearby->points;
-
-    for(int i=0; i<cloud_filtered_nonground->points.size();i++){
-
-        if(nonground_points[i].x>=min_x && nonground_points[i].x<=max_x &&
-        nonground_points[i].y>=min_y && nonground_points[i].y<=max_y &&
-        nonground_points[i].z>=-5 && nonground_points[i].z<=5){
-            pcl::PointXYZRGB pc;
-            pc.x = nonground_points[i].x;
-            pc.y = nonground_points[i].y;
-            pc.z = nonground_points[i].z;
-            ground_nearby_points.push_back(pc);
-        }
-
-    }
-    ground_nearby->height = 1;
-    ground_nearby->width = ground_nearby->points.size();
-    cout<<"groundnearby points:" <<ground_nearby->points.size()<<endl;
-    writer.write<pcl::PointXYZRGB>("GroundNearbyPointCloud.pcd", *ground_nearby, false);
-
-
-    // //segementation
-    // pcl::search::Search <pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>);
-    // pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>);
-    // //Color-based region growing segmentation
-    // pcl::IndicesPtr indices (new std::vector <int>);
-    // pcl::removeNaNFromPointCloud (*ground_nearby, *indices);
-    
-    // pcl::RegionGrowingRGB<pcl::PointXYZRGB> reg;
-    // reg.setInputCloud (ground_nearby);
-    // reg.setIndices (indices);
-    // reg.setSearchMethod (tree);
-    // reg.setDistanceThreshold (10);
-    // reg.setPointColorThreshold (6);
-    // reg.setRegionColorThreshold (5);
-    // reg.setMinClusterSize (600);
-
-    // std::vector <pcl::PointIndices> clusters;
-    // reg.extract (clusters);
-
-    // pcl::PointCloud <pcl::PointXYZRGB>::Ptr colored_cloud = reg.getColoredCloud ();
-    // writer.write<pcl::PointXYZRGB>("Coloredcloud.pcd", *colored_cloud, false);
-
-
+    auto& after_sege_points = after_sege->points;
     //EuclideanClusterExtraction
     std::vector<pcl::PointIndices> cluster_indices;
     pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>);
     pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
-    ec.setClusterTolerance (0.25); // 25cm
-    ec.setMinClusterSize (100);
+    ec.setClusterTolerance (0.1); // 25cm
+    ec.setMinClusterSize (200);
     ec.setMaxClusterSize (2500000);
     ec.setSearchMethod (tree);
     ec.setInputCloud (ground_nearby);
@@ -235,6 +218,17 @@ int main (int argc, char **argv)
         cloud_cluster->width = cloud_cluster->size ();
         cloud_cluster->height = 1;
         cloud_cluster->is_dense = true;
+        for(int i = 0; i<cloud_cluster->points.size();i++){
+
+            pcl::PointXYZRGB pc2;
+            pc2.x = cloud_cluster->points[i].x;
+            pc2.y = cloud_cluster->points[i].y;
+            pc2.z = cloud_cluster->points[i].z;
+            pc2.rgb  = j;
+            // cloud_cluster->points[i].rgb = j;
+            after_sege_points.push_back(pc2);
+
+        }
     
         std::cout << "PointCloud representing the Cluster: " << cloud_cluster->size () << " data points." << std::endl;
         std::stringstream ss;
@@ -242,26 +236,9 @@ int main (int argc, char **argv)
         writer.write<pcl::PointXYZRGB> ("./cloud_cluster/cloud_cluster_" + ss.str () + ".pcd", *cloud_cluster, false); //*
         j++;
     }
-
-    //pmf using point cloud library
-    // pcl::ProgressiveMorphologicalFilter<pcl::PointXYZRGB> pmf;
-    // pmf.setInputCloud (cloud);
-    // pmf.setMaxWindowSize (20);
-    // pmf.setSlope (0.2f);
-    // pmf.setInitialDistance (0.05f);
-    // pmf.setMaxDistance (0.1f);
-    // pmf.extract (ground->indices);
-
-    // pcl::ExtractIndices<pcl::PointXYZRGB> extract;
-    // extract.setInputCloud (cloud);
-    // extract.setIndices (ground);
-    // extract.filter (*cloud_filtered);
-
-    // std::cerr << "Ground cloud after filtering: " << std::endl;
-    // std::cerr << *cloud_filtered << std::endl;
-
-    // pcl::PCDWriter writer;
-    // writer.write<pcl::PointXYZRGB> ("samp11-utm_ground.pcd", *cloud_filtered, false);
+    after_sege->height=1;
+    after_sege->width=after_sege->points.size();
+    writer.write<pcl::PointXYZRGB>("AfterSege.pcd", *after_sege, false);
 
 
     end = clock();
