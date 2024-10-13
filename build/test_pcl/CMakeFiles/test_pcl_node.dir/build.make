@@ -210,6 +210,7 @@ test_pcl_node_EXTERNAL_OBJECTS =
 /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
 /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libconsole_bridge.so.0.4
 /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libpcl_visualization.so
+/home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libpcl_io.so
 /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libpcl_search.so
 /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libpcl_kdtree.so
 /home/bjersgen2004/pc_new/devel/lib/test_pcl/test_pcl_node: /usr/lib/x86_64-linux-gnu/libpcl_octree.so
