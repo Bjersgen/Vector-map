@@ -1146,6 +1146,14 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: \
  /usr/include/c++/9/bits/hashtable.h \
  /usr/include/c++/9/bits/hashtable_policy.h \
  /usr/include/c++/9/bits/unordered_set.h \
+ /opt/ros/noetic/include/visualization_msgs/Marker.h \
+ /opt/ros/noetic/include/ros/message_operations.h \
+ /opt/ros/noetic/include/std_msgs/Header.h \
+ /opt/ros/noetic/include/geometry_msgs/Pose.h \
+ /opt/ros/noetic/include/geometry_msgs/Point.h \
+ /opt/ros/noetic/include/geometry_msgs/Quaternion.h \
+ /opt/ros/noetic/include/geometry_msgs/Vector3.h \
+ /opt/ros/noetic/include/std_msgs/ColorRGBA.h \
  /usr/include/pcl-1.10/pcl/point_cloud.h \
  /usr/include/eigen3/Eigen/StdVector /usr/include/eigen3/Eigen/Core \
  /usr/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h \
@@ -1326,8 +1334,6 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: \
  /usr/include/pcl-1.10/pcl/pcl_exports.h /usr/include/boost/foreach.hpp \
  /usr/include/boost/utility/addressof.hpp \
  /usr/include/boost/foreach_fwd.hpp \
- /opt/ros/noetic/include/std_msgs/Header.h \
- /opt/ros/noetic/include/ros/message_operations.h \
  /opt/ros/noetic/include/sensor_msgs/Image.h \
  /opt/ros/noetic/include/sensor_msgs/PointField.h \
  /opt/ros/noetic/include/sensor_msgs/PointCloud2.h \
@@ -2390,4 +2396,7 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: \
  /usr/include/pcl-1.10/pcl/surface/concave_hull.h \
  /usr/include/pcl-1.10/pcl/surface/on_nurbs/fitting_curve_2d_asdm.h \
  /usr/include/pcl-1.10/pcl/surface/on_nurbs/fitting_curve_2d_apdm.h \
- /usr/include/pcl-1.10/pcl/surface/on_nurbs/triangulation.h
+ /usr/include/pcl-1.10/pcl/surface/on_nurbs/triangulation.h \
+ /usr/include/pcl-1.10/pcl/features/don.h \
+ /usr/include/pcl-1.10/pcl/features/normal_3d_omp.h \
+ /usr/include/pcl-1.10/pcl/filters/conditional_removal.h

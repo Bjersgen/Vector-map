@@ -1283,6 +1283,14 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
   /usr/include/c++/9/bits/hashtable.h \
   /usr/include/c++/9/bits/hashtable_policy.h \
   /usr/include/c++/9/bits/unordered_set.h \
+  /opt/ros/noetic/include/visualization_msgs/Marker.h \
+  /opt/ros/noetic/include/ros/message_operations.h \
+  /opt/ros/noetic/include/std_msgs/Header.h \
+  /opt/ros/noetic/include/geometry_msgs/Pose.h \
+  /opt/ros/noetic/include/geometry_msgs/Point.h \
+  /opt/ros/noetic/include/geometry_msgs/Quaternion.h \
+  /opt/ros/noetic/include/geometry_msgs/Vector3.h \
+  /opt/ros/noetic/include/std_msgs/ColorRGBA.h \
   /usr/include/pcl-1.10/pcl/point_cloud.h \
   /usr/include/eigen3/Eigen/StdVector \
   /usr/include/eigen3/Eigen/Core \
@@ -1469,8 +1477,6 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
   /usr/include/boost/foreach.hpp \
   /usr/include/boost/utility/addressof.hpp \
   /usr/include/boost/foreach_fwd.hpp \
-  /opt/ros/noetic/include/std_msgs/Header.h \
-  /opt/ros/noetic/include/ros/message_operations.h \
   /opt/ros/noetic/include/sensor_msgs/Image.h \
   /opt/ros/noetic/include/sensor_msgs/PointField.h \
   /opt/ros/noetic/include/sensor_msgs/PointCloud2.h \
@@ -2598,8 +2604,15 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
   /usr/include/pcl-1.10/pcl/surface/concave_hull.h \
   /usr/include/pcl-1.10/pcl/surface/on_nurbs/fitting_curve_2d_asdm.h \
   /usr/include/pcl-1.10/pcl/surface/on_nurbs/fitting_curve_2d_apdm.h \
-  /usr/include/pcl-1.10/pcl/surface/on_nurbs/triangulation.h
+  /usr/include/pcl-1.10/pcl/surface/on_nurbs/triangulation.h \
+  /usr/include/pcl-1.10/pcl/features/don.h \
+  /usr/include/pcl-1.10/pcl/features/normal_3d_omp.h \
+  /usr/include/pcl-1.10/pcl/filters/conditional_removal.h
 
+
+/usr/include/pcl-1.10/pcl/features/normal_3d_omp.h:
+
+/usr/include/pcl-1.10/pcl/features/don.h:
 
 /usr/include/pcl-1.10/pcl/surface/concave_hull.h:
 
@@ -2880,6 +2893,12 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 /usr/include/boost/mpl/aux_/has_key_impl.hpp:
 
 /usr/include/boost/mpl/has_key.hpp:
+
+/usr/include/boost/fusion/adapted/mpl/detail/has_key_impl.hpp:
+
+/usr/include/boost/fusion/adapted/mpl/detail/at_impl.hpp:
+
+/usr/include/boost/fusion/adapted/mpl/detail/is_sequence_impl.hpp:
 
 /opt/ros/noetic/include/ros/message.h:
 
@@ -3449,8 +3468,6 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 
 /usr/include/boost/mpl/vector/aux_/iterator.hpp:
 
-/usr/include/boost/mpl/aux_/preprocessed/gcc/bind.hpp:
-
 /usr/include/eigen3/Eigen/src/Core/ConditionEstimator.h:
 
 /usr/include/boost/predef/os/linux.h:
@@ -3485,6 +3502,8 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 
 /usr/include/boost/predef/os/bsd/free.h:
 
+/usr/include/pcl-1.10/pcl/filters/conditional_removal.h:
+
 /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
 
 /usr/include/boost/predef/os/bsd/dragonfly.h:
@@ -3508,6 +3527,10 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 /usr/include/boost/predef/library/std/stlport.h:
 
 /usr/include/c++/9/vector:
+
+/usr/include/boost/mpl/aux_/preprocessed/gcc/bind.hpp:
+
+/opt/ros/noetic/include/geometry_msgs/Vector3.h:
 
 /usr/include/pcl-1.10/pcl/filters/boost.h:
 
@@ -5725,6 +5748,8 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 
 /usr/include/boost/fusion/support/is_sequence.hpp:
 
+/opt/ros/noetic/include/geometry_msgs/Pose.h:
+
 /opt/ros/noetic/include/ros/service_traits.h:
 
 /opt/ros/noetic/include/ros/timer_options.h:
@@ -6045,6 +6070,22 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 
 /usr/include/c++/9/bits/unordered_set.h:
 
+/opt/ros/noetic/include/visualization_msgs/Marker.h:
+
+/usr/include/boost/thread/csbl/memory/unique_ptr.hpp:
+
+/opt/ros/noetic/include/std_msgs/Header.h:
+
+/opt/ros/noetic/include/geometry_msgs/Point.h:
+
+/opt/ros/noetic/include/geometry_msgs/Quaternion.h:
+
+/usr/include/boost/config/no_tr1/cmath.hpp:
+
+/usr/include/pcl-1.10/pcl/impl/cloud_iterator.hpp:
+
+/opt/ros/noetic/include/std_msgs/ColorRGBA.h:
+
 /usr/include/boost/predef/detail/os_detected.h:
 
 /usr/include/eigen3/Eigen/StdVector:
@@ -6064,6 +6105,10 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 /usr/lib/gcc/x86_64-linux-gnu/9/include/xmmintrin.h:
 
 /usr/include/pcl-1.10/pcl/visualization/cloud_viewer.h:
+
+/usr/include/boost/fusion/adapted/mpl/detail/size_impl.hpp:
+
+/usr/lib/gcc/x86_64-linux-gnu/9/include/mm_malloc.h:
 
 /usr/include/boost/preprocessor/list/detail/fold_right.hpp:
 
@@ -6430,10 +6475,6 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 /usr/lib/gcc/x86_64-linux-gnu/9/include/float.h:
 
 /usr/include/boost/foreach_fwd.hpp:
-
-/usr/include/boost/thread/csbl/memory/unique_ptr.hpp:
-
-/opt/ros/noetic/include/std_msgs/Header.h:
 
 /opt/ros/noetic/include/sensor_msgs/Image.h:
 
@@ -7177,10 +7218,6 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 
 /usr/include/pcl-1.10/pcl/cloud_iterator.h:
 
-/usr/include/boost/config/no_tr1/cmath.hpp:
-
-/usr/include/pcl-1.10/pcl/impl/cloud_iterator.hpp:
-
 /usr/include/boost/type_traits/is_unbounded_array.hpp:
 
 /usr/include/pcl-1.10/pcl/filters/filter_indices.h:
@@ -7450,8 +7487,6 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 /usr/include/boost/fusion/view/joint_view/joint_view_fwd.hpp:
 
 /usr/include/boost/fusion/adapted/mpl/detail/begin_impl.hpp:
-
-/usr/include/boost/fusion/adapted/mpl/detail/has_key_impl.hpp:
 
 /usr/include/boost/fusion/view/joint_view/detail/deref_impl.hpp:
 
@@ -7732,11 +7767,3 @@ test_pcl/CMakeFiles/test_pcl_node.dir/src/test_pcl_node.cpp.o: /home/bjersgen200
 /usr/include/boost/signals2/detail/auto_buffer.hpp:
 
 /usr/include/boost/mpl/aux_/filter_iter.hpp:
-
-/usr/include/boost/fusion/adapted/mpl/detail/is_sequence_impl.hpp:
-
-/usr/lib/gcc/x86_64-linux-gnu/9/include/mm_malloc.h:
-
-/usr/include/boost/fusion/adapted/mpl/detail/size_impl.hpp:
-
-/usr/include/boost/fusion/adapted/mpl/detail/at_impl.hpp:
