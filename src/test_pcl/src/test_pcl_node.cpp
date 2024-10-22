@@ -90,15 +90,15 @@ void PointCloud2Vector3d (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::on_nur
   }
 
 }
-int estimateBorders(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,float re,float reforn, int k) 
+int estimateBorders(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud,float re,float reforn, int k) 
 { 
 
     pcl::PointCloud<pcl::Boundary> boundaries; 
-    pcl::BoundaryEstimation<pcl::PointXYZRGB, pcl::Normal, pcl::Boundary> boundEst; 
-    pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> normEst; 
+    pcl::BoundaryEstimation<pcl::PointXYZ, pcl::Normal, pcl::Boundary> boundEst; 
+    pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normEst; 
     pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>); 
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_boundary (new pcl::PointCloud<pcl::PointXYZRGB>); 
-    normEst.setInputCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr(cloud)); 
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_boundary (new pcl::PointCloud<pcl::PointXYZ>); 
+    normEst.setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr(cloud)); 
     normEst.setRadiusSearch(reforn); 
     normEst.compute(*normals); 
 
@@ -106,7 +106,7 @@ int estimateBorders(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,float re,float
     boundEst.setInputNormals(normals); 
     boundEst.setRadiusSearch(re); 
     boundEst.setAngleThreshold(M_PI/4); 
-    boundEst.setSearchMethod(pcl::search::KdTree<pcl::PointXYZRGB>::Ptr (new pcl::search::KdTree<pcl::PointXYZRGB>)); 
+    boundEst.setSearchMethod(pcl::search::KdTree<pcl::PointXYZ>::Ptr (new pcl::search::KdTree<pcl::PointXYZ>)); 
     boundEst.compute(boundaries); 
 
     for(int i = 0; i < cloud->points.size(); i++) 
@@ -123,28 +123,7 @@ int estimateBorders(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,float re,float
     cloud_boundary->width=cloud_boundary->points.size();
     std::stringstream ss;
     ss << std::setw(4) << std::setfill('0') << k;
-    writer.write<pcl::PointXYZRGB>("/home/bjersgen2004/pc_new/cloud_boundary/Cloud_boundary_" + ss.str()+".pcd", *cloud_boundary, false);
-
-
-    // boost::shared_ptr<pcl::visualization::PCLVisualizer> MView (new pcl::visualization::PCLVisualizer ("BoundaryEstimation"));
-
-    // int v1(0); 
-    // MView->createViewPort (0.0, 0.0, 0.5, 1.0, v1); 
-    // MView->setBackgroundColor (0.3, 0.3, 0.3, v1); 
-    // MView->addText ("Raw point clouds", 10, 10, "v1_text", v1); 
-    // int v2(0); 
-    // MView->createViewPort (0.5, 0.0, 1, 1.0, v2); 
-    // MView->setBackgroundColor (0.5, 0.5, 0.5, v2); 
-    // MView->addText ("Boudary point clouds", 10, 10, "v2_text", v2); 
-
-    // MView->addPointCloud<pcl::PointXYZRGB> (cloud, "sample cloud",v1);
-    // MView->addPointCloud<pcl::PointXYZRGB> (cloud_boundary, "cloud_boundary",v2);
-    // MView->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_COLOR, 1,0,0, "sample cloud",v1);
-    // MView->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_COLOR, 0,1,0, "cloud_boundary",v2);
-    // MView->addCoordinateSystem (1.0);
-    // MView->initCameraParameters ();
-
-    // MView->spin();
+    writer.write<pcl::PointXYZ>("/home/bjersgen2004/pc_new/cloud_boundary/Cloud_boundary_" + ss.str()+".pcd", *cloud_boundary, false);
 
     return 0; 
 } 
@@ -233,9 +212,21 @@ void projectToXYPlane(const pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pc
         projected_point.x = point.x;
         projected_point.y = point.y;
         projected_point.z = 0;  // Project onto XY-plane
-        // projected_point.r = point.r;
-        // projected_point.b = point.b;
-        // projected_point.g = point.g;
+
+        output_cloud->points.push_back(projected_point);
+    }
+    output_cloud->width = output_cloud->points.size();
+    output_cloud->height = 1;
+}
+void projectToXYPlaneRGB(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &output_cloud) {
+    for (const auto& point : input_cloud->points) {
+        pcl::PointXYZRGB projected_point;
+        projected_point.x = point.x;
+        projected_point.y = point.y;
+        projected_point.z = 0;  // Project onto XY-plane
+        projected_point.r = point.r;
+        projected_point.b = point.b;
+        projected_point.g = point.g;
         output_cloud->points.push_back(projected_point);
     }
     output_cloud->width = output_cloud->points.size();
@@ -377,72 +368,72 @@ int main (int argc, char **argv)
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_src_test_filter(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointIndicesPtr ground (new pcl::PointIndices);
 
-    // if (pcl::io::loadPCDFile<pcl::PointXYZRGB>("/home/bjersgen2004/Documents/new.pcd", *cloud) == -1)
-	// {
-	// 	PCL_ERROR("Couldn't read file1 \n");
-	// 	return (-1);
-	// }
+    if (pcl::io::loadPCDFile<pcl::PointXYZRGB>("/home/bjersgen2004/Documents/new.pcd", *cloud) == -1)
+	{
+		PCL_ERROR("Couldn't read file1 \n");
+		return (-1);
+	}
 
-    // std::cerr << "Cloud before filtering for ground : " << std::endl;
-    // std::cerr << *cloud << std::endl;
+    std::cerr << "Cloud before filtering for ground : " << std::endl;
+    std::cerr << *cloud << std::endl;
 
-    // //using csf
-    // vector<csf::Point> pc;
-    // const auto& pointclouds = cloud->points;
-    // pc.resize(cloud->size());
-    // transform(pointclouds.begin(), pointclouds.end(), pc.begin(), [&](const auto& p)->csf::Point {
-    //     csf::Point pp;
-    //     pp.x = p.x;
-    //     pp.y = p.y;
-    //     pp.z = p.z;
-    //     return pp;
-    //     });
+    //using csf
+    vector<csf::Point> pc;
+    const auto& pointclouds = cloud->points;
+    pc.resize(cloud->size());
+    transform(pointclouds.begin(), pointclouds.end(), pc.begin(), [&](const auto& p)->csf::Point {
+        csf::Point pp;
+        pp.x = p.x;
+        pp.y = p.y;
+        pp.z = p.z;
+        return pp;
+        });
 
-    // std::vector<int> groundIndexes, offGroundIndexes;
-    // clothSimulationFilter(pc, groundIndexes, offGroundIndexes);
+    std::vector<int> groundIndexes, offGroundIndexes;
+    clothSimulationFilter(pc, groundIndexes, offGroundIndexes);
     
-    // CSF_addPointCloud(groundIndexes, cloud,cloud_filtered_ground);
-    // writer.write<pcl::PointXYZRGB>("groundPointCloud.pcd", *cloud_filtered_ground, false);
+    CSF_addPointCloud(groundIndexes, cloud,cloud_filtered_ground);
+    writer.write<pcl::PointXYZRGB>("groundPointCloud.pcd", *cloud_filtered_ground, false);
 
-    // CSF_addPointCloud(offGroundIndexes, cloud,cloud_filtered_nonground);
-    // writer.write<pcl::PointXYZRGB>("nonGroundPointCloud.pcd", *cloud_filtered_nonground, false);
+    CSF_addPointCloud(offGroundIndexes, cloud,cloud_filtered_nonground);
+    writer.write<pcl::PointXYZRGB>("nonGroundPointCloud.pcd", *cloud_filtered_nonground, false);
 
-    // cout<<"cloud_filtered_ground points:"<<cloud_filtered_ground->points.size() 
-    // << "cloud_filtered_nonground points:"<<cloud_filtered_nonground->points.size()<<endl;
+    cout<<"cloud_filtered_ground points:"<<cloud_filtered_ground->points.size() 
+    << "cloud_filtered_nonground points:"<<cloud_filtered_nonground->points.size()<<endl;
 
 
-    // //Create a KD-Tree for the cloud
-    // pcl::PointCloud<pcl::PointXYZRGB>::Ptr nearby_points(new pcl::PointCloud<pcl::PointXYZRGB>);
-    // pcl::KdTreeFLANN<pcl::PointXYZRGB> kdtree4;
-    // kdtree4.setInputCloud(cloud_filtered_nonground);
+    //Create a KD-Tree for the cloud
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr nearby_points(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::KdTreeFLANN<pcl::PointXYZRGB> kdtree4;
+    kdtree4.setInputCloud(cloud_filtered_nonground);
 
-    // // Use a set to store indices to avoid duplicates
-    // std::unordered_set<int> all_nearby_indices;
+    // Use a set to store indices to avoid duplicates
+    std::unordered_set<int> all_nearby_indices;
 
-    // // Loop through each ground point and find the nearby points within the threshold
-    // for (const auto& ground_point : cloud_filtered_ground->points) {
-    //     std::vector<int> point_indices;
-    //     std::vector<float> point_squared_distances;
+    // Loop through each ground point and find the nearby points within the threshold
+    for (const auto& ground_point : cloud_filtered_ground->points) {
+        std::vector<int> point_indices;
+        std::vector<float> point_squared_distances;
 
-    //     if (kdtree4.radiusSearch(ground_point, distance_threshold, point_indices, point_squared_distances) > 0) {
-    //         all_nearby_indices.insert(point_indices.begin(), point_indices.end());
-    //     }
-    // }
+        if (kdtree4.radiusSearch(ground_point, distance_threshold, point_indices, point_squared_distances) > 0) {
+            all_nearby_indices.insert(point_indices.begin(), point_indices.end());
+        }
+    }
 
-    // // Reserve space for flatpak run org.cloudcompare.CloudComparenearby_points to improve memory allocation efficiency
-    // nearby_points->reserve(all_nearby_indices.size());
+    // Reserve space for flatpak run org.cloudcompare.CloudComparenearby_points to improve memory allocation efficiency
+    nearby_points->reserve(all_nearby_indices.size());
 
-    // // Extract the nearby points using the indices
-    // for (const auto& idx : all_nearby_indices) {
-    //     nearby_points->points.push_back(cloud_filtered_nonground->points[idx]);
-    // }
+    // Extract the nearby points using the indices
+    for (const auto& idx : all_nearby_indices) {
+        nearby_points->points.push_back(cloud_filtered_nonground->points[idx]);
+    }
 
-    // nearby_points->width = nearby_points->points.size();
-    // nearby_points->height = 1;
-    // nearby_points->is_dense = true;
+    nearby_points->width = nearby_points->points.size();
+    nearby_points->height = 1;
+    nearby_points->is_dense = true;
 
-    // cout<<"groundnearby points:" <<nearby_points->points.size()<<endl;
-    // writer.write<pcl::PointXYZRGB>("GroundNearbyPointCloud.pcd", *nearby_points, false);
+    cout<<"groundnearby points:" <<nearby_points->points.size()<<endl;
+    writer.write<pcl::PointXYZRGB>("GroundNearbyPointCloud.pcd", *nearby_points, false);
 
 
     if (pcl::io::loadPCDFile<pcl::PointXYZRGB>("/home/bjersgen2004/pc_new/GroundNearbyPointCloud.pcd", *ground_nearby) == -1)
@@ -452,7 +443,6 @@ int main (int argc, char **argv)
 	}
     std::cout<< "1" << std::endl;
     //EuclideanClusterExtraction
-    auto& after_sege_points = after_sege->points;
 
     std::vector<pcl::PointIndices> cluster_indices;
     pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>);
@@ -581,7 +571,10 @@ int main (int argc, char **argv)
     cout<< "cluster_indices:" << cluster_indices.size() << endl;
     int j = 0;
     for (const auto& cluster : cluster_indices){
+
         pcl::PointCloud<pcl::PointNormal>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointNormal>);
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_cluster_colored(new pcl::PointCloud<pcl::PointXYZRGB>());
+
         for (const auto& idx : cluster.indices) {
             cloud_cluster->push_back((*doncloud)[idx]);
         } //*
@@ -596,88 +589,26 @@ int main (int argc, char **argv)
             pc2.z = cloud_cluster->points[i].z;
             pc2.rgb  = j;
             // cloud_cluster->points[i].rgb = j;
-            after_sege_points.push_back(pc2);
+            after_sege->points.push_back(pc2);
+            cloud_cluster_colored->points.push_back(pc2);
 
         }
+
+        cloud_cluster_colored->height=1;
+        cloud_cluster_colored->width=cloud_cluster_colored->points.size();
     
         std::cout << "PointCloud representing the Cluster: " << cloud_cluster->size () << " data points." << std::endl;
         std::stringstream ss;
         ss << std::setw(4) << std::setfill('0') << j;
-        writer.write<pcl::PointNormal> ("/home/bjersgen2004/pc_new/cloud_cluster/cloud_cluster_" + ss.str () + ".pcd", *cloud_cluster, false); //*
+        writer.write<pcl::PointXYZRGB> ("/home/bjersgen2004/pc_new/cloud_cluster/cloud_cluster_" + ss.str () + ".pcd", *cloud_cluster_colored, false); //*
         j++;
     }
     after_sege->height=1;
     after_sege->width=after_sege->points.size();
     writer.write<pcl::PointXYZRGB>("AfterSege.pcd", *after_sege, false);
-
-
-
-//     pcl::PointCloud <pcl::Normal>::Ptr normals (new pcl::PointCloud <pcl::Normal>);
-//     pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> normal_estimator;
-
-//     normal_estimator.setSearchMethod (tree);
-//     normal_estimator.setInputCloud (ground_nearby);
-//     normal_estimator.setKSearch (50);
-//     normal_estimator.compute (*normals);
-
-
-//     pcl::IndicesPtr indices (new std::vector <int>);
-//     pcl::removeNaNFromPointCloud(*ground_nearby, *indices);
-
-
-//     pcl::RegionGrowing<pcl::PointXYZRGB, pcl::Normal> reg;
-//     reg.setMinClusterSize (30);
-//     reg.setMaxClusterSize (300000);
-//     reg.setSearchMethod (tree);
-//     reg.setNumberOfNeighbours (50);
-//     reg.setInputCloud (ground_nearby);
-//     reg.setIndices (indices);
-//     reg.setInputNormals (normals);
-//     reg.setSmoothnessThreshold (8.0 / 180.0 * M_PI);
-//     reg.setCurvatureThreshold (8.0);
-//     reg.extract (cluster_indices);
-
-
-//     std::cout << "Number of clusters is equal to " << cluster_indices.size () << std::endl;
-//     std::cout << "First cluster has " << cluster_indices[0].indices.size () << " points." << std::endl;
-//     std::cout << "These are the indices of the points of the initial" <<
-//     std::endl << "cloud that belong to the first cluster:" << std::endl;
-//     int j = 0;
-//     for (const auto& cluster : cluster_indices){
-
-//         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZRGB>);
-//         for (const auto& idx : cluster.indices) {
-//             cloud_cluster->push_back((*ground_nearby)[idx]);
-//         } //*
-//         cloud_cluster->width = cloud_cluster->size ();
-//         cloud_cluster->height = 1;
-//         cloud_cluster->is_dense = true;
-
-//         for(int i = 0; i<cloud_cluster->points.size();i++){
-
-//             pcl::PointXYZRGB pc2;
-//             pc2.x = cloud_cluster->points[i].x;
-//             pc2.y = cloud_cluster->points[i].y;
-//             pc2.z = cloud_cluster->points[i].z;
-//             pc2.rgb  = j;
-//             // cloud_cluster->points[i].rgb = j;
-//             after_sege_points.push_back(pc2);
-
-//         }
-
-//         std::cout << "PointCloud representing the Cluster: " << cloud_cluster->size () << " data points." << std::endl;
-//         std::stringstream ss;
-//         ss << std::setw(4) << std::setfill('0') << j;
-//         writer.write<pcl::PointXYZRGB> ("/home/bjersgen2004/pc_new/cloud_cluster/cloud_cluster_" + ss.str () + ".pcd", *cloud_cluster, false); //*
-//         j++;
-// }
-//     after_sege->height=1;
-//     after_sege->width=after_sege->points.size();
-//     writer.write<pcl::PointXYZRGB>("cluster_combine.pcd", *after_sege, false);
-
-//     pcl::PointCloud <pcl::PointXYZRGB>::Ptr colored_cloud = reg.getColoredCloud ();
-//     writer.write<pcl::PointXYZRGB>("AfterSege.pcd", *colored_cloud, false);
-
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr after_sege_xy(new pcl::PointCloud<pcl::PointXYZRGB>());
+    projectToXYPlaneRGB(after_sege,after_sege_xy);
+    writer.write<pcl::PointXYZRGB>("AfterSegeXY.pcd", *after_sege_xy, false);
 
 	srand(time(NULL));
     Cfg cfg;
@@ -690,16 +621,18 @@ int main (int argc, char **argv)
     re=atof(re_read.c_str());
     reforn=atof(reforn_read.c_str());
 
+    pcl::PointCloud<pcl::PointXYZ>::Ptr combined_cloud(new pcl::PointCloud<pcl::PointXYZ>());
+    pcl::PolygonMesh combined_mesh;
 
     std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> concave_hull_clouds;
     for(int cluster_id = 0; cluster_id < cluster_indices.size(); cluster_id++) {
 
          std::cout << "Processing with the "<< cluster_id << "Cluster" << std::endl;
         // 加载当前聚类点云
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cluster(new pcl::PointCloud<pcl::PointXYZRGB>);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cluster(new pcl::PointCloud<pcl::PointXYZ>);
         std::stringstream cluster_filename;
         cluster_filename << "/home/bjersgen2004/pc_new/cloud_cluster/cloud_cluster_" << std::setw(4) << std::setfill('0') << cluster_id << ".pcd";
-        if (pcl::io::loadPCDFile<pcl::PointXYZRGB>(cluster_filename.str(), *cluster) == -1)
+        if (pcl::io::loadPCDFile<pcl::PointXYZ>(cluster_filename.str(), *cluster) == -1)
         {
             PCL_ERROR("Couldn't read cluster file \n");
             continue;
@@ -739,13 +672,18 @@ int main (int argc, char **argv)
         chull.setAlpha(alpha);
         chull.reconstruct(*concave_hull);
 
-        // 保存凹包点云
+
+        *combined_cloud += *concave_hull;
+
+        //保存凹包点云
         std::stringstream concave_filename;
         concave_filename << "/home/bjersgen2004/pc_new/concave_hull/Concave_" << std::setw(4) << std::setfill('0') << cluster_id << ".pcd";
         writer.write<pcl::PointXYZ>(concave_filename.str(), *concave_hull, false);
         concave_hull_clouds.push_back(concave_hull);
 
     }
+
+    pcl::io::savePLYFile("combined_hulls.ply", *combined_cloud);
 
     //visulization
 
@@ -829,59 +767,24 @@ int main (int argc, char **argv)
     // std::cout << std::endl;
     // pcl::io::saveVTKFile ("mesh1.vtk", triangles);
 
-    //****************************concave */********************************************** *
 
-    // pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_hull(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr ground_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::io::loadPCDFile("groundPointCloud.pcd", *ground_cloud);
 
-    // std::string alpha_read;
-    // cfg.readConfigFile(config_file_path, "alpha", alpha_read);
-    // std::cout<< "alpha" << alpha_read << std::endl;
-    // float alpha;
-    // alpha=atof(alpha_read.c_str());
+    // pcl::PointCloud<pcl::PointXYZ>::Ptr ground_cloud_xy(new pcl::PointCloud<pcl::PointXYZ>);
+    // pcl::PointCloud<pcl::PointXYZ>::Ptr ground_cloud_xy_hull(new pcl::PointCloud<pcl::PointXYZ>);
+    // projectToXYPlane(ground_cloud,ground_cloud_xy);
+    // pcl::ConcaveHull<pcl::PointXYZ> chull2;
+    // chull2.setInputCloud(ground_cloud_xy);
+    // chull2.setAlpha(3.0);
+    // chull2.reconstruct(*ground_cloud_xy_hull);
+    // concave_hull_clouds.push_back(ground_cloud_xy_hull);
 
-
-    // pcl::ConcaveHull<pcl::PointXYZ> chull;
-    // chull.setInputCloud(output_cloud_xy);
-    // chull.setAlpha(alpha);
-    // chull.reconstruct(*cloud_hull);
-
-    // std::cout<< "concave hull has" << cloud_hull->size() << "points" <<std::endl;
-    // writer.write<pcl::PointXYZ>("concave.pcd", *cloud_hull, false);
-
-
-    // pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("Curve Fitting 2D"));
-    // viewer->setBackgroundColor(255,255,255);
-
-    // pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> cloud_color(output_cloud_xy,0,0,0);
-    // viewer->addPointCloud<pcl::PointXYZ>(output_cloud_xy,cloud_color,"cloud23");
-
-    // pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> hull_color(cloud_hull,0,255,0);
-    // viewer->addPointCloud<pcl::PointXYZ>(cloud_hull,hull_color,"cloud45");
-
-    // for(size_t i =0; i< cloud_hull->points.size(); ++i){
-
-    //     pcl::PointXYZ p1 = cloud_hull->points[i];
-    //     pcl::PointXYZ p2 = cloud_hull->points[(i+1)%cloud_hull->points.size()];
-    //     viewer->addLine<pcl::PointXYZ>(p1,p2,0,255,0,"line"+std::to_string(i));
-    // }
-
-    // // viewer->addCoordinateSystem(1.0);
-    // viewer->initCameraParameters();
-    // viewer->resetCamera();
-
-    // while(!viewer->wasStopped()){
-    //     viewer->spinOnce(100);
-    // }
-
-//     viewer.setSize(800, 600);
+    // estimateBorders(ground_cloud,1, 1, 9000);
 
     end = clock();
     double dur = (double)(end - start);
     printf("Use Time:%f\n", (dur / CLOCKS_PER_SEC));
-
-
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr ground_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::io::loadPCDFile("groundPointCloud.pcd", *ground_cloud);
     //convert to ros and pub to rviz
     ros::init (argc, argv, "multiple_concave_hulls_publisher");
     ros::NodeHandle nh;
